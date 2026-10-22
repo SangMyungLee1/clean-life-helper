@@ -146,7 +146,7 @@ function absoluteUrlForHref(href) {
   return new URL(href, `${baseUrl}/`).href;
 }
 
-function pageShell({ title, description, canonical, body, structuredData = null, pageClass = "", ogImage = `${baseUrl}/images/home-hero.webp` }) {
+function pageShell({ title, description, canonical, body, structuredData = null, pageClass = "", ogImage = `${baseUrl}/images/home-hero.webp`, headExtra = "" }) {
   const schemas = structuredData
     ? (Array.isArray(structuredData) ? structuredData : [structuredData])
     : [];
@@ -157,6 +157,7 @@ function pageShell({ title, description, canonical, body, structuredData = null,
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  ${headExtra}
   <title>${escapeHtml(title)}</title>
   <meta name="description" content="${escapeHtml(description)}">
   <meta name="robots" content="index,follow,max-image-preview:large">
@@ -506,6 +507,7 @@ function homePage() {
     canonical: `${baseUrl}/`,
     body,
     pageClass: "home-page",
+    headExtra: '<meta name="naver-site-verification" content="ed62499587760918eb629eb80e8631291b9c3fdf">',
     structuredData: [
       { "@context": "https://schema.org", "@type": "WebSite", name: config.siteName, url: `${baseUrl}/`, description },
       homeItemList

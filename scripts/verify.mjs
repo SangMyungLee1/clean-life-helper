@@ -70,6 +70,12 @@ for (const file of htmlFiles) {
 }
 
 const homeHtml = await readFile(path.join(dist, "index.html"), "utf8");
+const naverVerificationMeta = '<meta name="naver-site-verification" content="ed62499587760918eb629eb80e8631291b9c3fdf">';
+if (!homeHtml.includes(naverVerificationMeta)) failures.push("홈페이지 네이버 소유확인 메타 태그 누락");
+for (const file of htmlFiles.filter((file) => path.relative(dist, file) !== "index.html")) {
+  const html = await readFile(file, "utf8");
+  if (html.includes(naverVerificationMeta)) failures.push(`${path.relative(dist, file)}: 홈페이지 전용 네이버 소유확인 태그 포함`);
+}
 if (!homeHtml.includes('"@type":"ItemList"')) failures.push("홈페이지 네이버 캐러셀 ItemList 누락");
 
 const expectedServicePages = regions.length * regionalCategories.length;
