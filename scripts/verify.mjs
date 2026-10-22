@@ -62,6 +62,8 @@ for (const file of htmlFiles) {
     if (partnerCount !== 4) failures.push(`${path.relative(dist, file)}: 제휴 버튼 ${partnerCount}개`);
     const partnerImages = [...html.matchAll(/<img class="partner-thumb" src="([^"]+)"/g)].map((match) => match[1]);
     if (partnerImages.length !== 4 || new Set(partnerImages).size !== 4) failures.push(`${path.relative(dist, file)}: 업체 사진이 4개 고유 이미지가 아닙니다.`);
+    const clickablePartnerCards = [...html.matchAll(/<a class="partner-card[^>]*"[^>]*rel="sponsored nofollow noopener noreferrer"/g)].length;
+    if (clickablePartnerCards !== 4) failures.push(`${path.relative(dist, file)}: 카드 전체 링크 ${clickablePartnerCards}개 / 4개`);
     if (!html.includes('<details class="detail-guide">') || !html.includes('class="detail-guide-content"')) failures.push(`${path.relative(dist, file)}: 접이식 상세 안내 누락`);
     if (!html.includes('class="service-photo-strip"')) failures.push(`${path.relative(dist, file)}: 서비스 사진 영역 누락`);
     if (isRegionalServicePage && !html.includes('class="region-network"')) failures.push(`${path.relative(dist, file)}: 지역 페이지 연결 블록 누락`);

@@ -249,7 +249,7 @@ function searchMarkup(selectedSlug = "") {
 
 function partnerCardsMarkup(category, regionName) {
   return `<div class="partner-grid">
-    ${category.partners.map((partner, index) => `<article class="partner-card${index === 0 ? " is-featured" : ""}">
+    ${category.partners.map((partner, index) => `<a class="partner-card${index === 0 ? " is-featured" : ""}" href="${escapeHtml(partner.url)}" target="_blank" rel="sponsored nofollow noopener noreferrer" aria-label="${escapeHtml(`${partner.name} ${category.buttonLabel}`)}">
       ${index === 0 ? '<span class="recommended">추천 비교</span>' : ""}
       <header class="partner-head">
         <span class="rank" aria-label="${index + 1}번째 업체">${index + 1}</span>
@@ -259,8 +259,8 @@ function partnerCardsMarkup(category, regionName) {
       <ul class="partner-features">
         ${partner.features.map((feature) => `<li><span aria-hidden="true">✓</span>${escapeHtml(feature)}</li>`).join("")}
       </ul>
-      <a class="partner-cta" href="${escapeHtml(partner.url)}" target="_blank" rel="sponsored nofollow noopener noreferrer">${escapeHtml(category.buttonLabel)}<span aria-hidden="true">↗</span></a>
-    </article>`).join("")}
+      <span class="partner-cta">${escapeHtml(category.buttonLabel)}<span aria-hidden="true">↗</span></span>
+    </a>`).join("")}
   </div>`;
 }
 
