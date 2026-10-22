@@ -28,7 +28,9 @@ function routeTarget(href) {
   try { decoded = decodeURIComponent(raw); } catch { return "__INVALID_ENCODING__"; }
   if (decoded === "/") return path.join(dist, "index.html");
   const relative = decoded.replace(/^\/+/, "");
-  return path.join(dist, relative.endsWith("/") ? `${relative}index.html` : relative);
+  if (relative.endsWith("/")) return path.join(dist, `${relative}index.html`);
+  if (/\.(?:css|js|png|ico|webp|xml|json|txt)$/i.test(relative)) return path.join(dist, relative);
+  return path.join(dist, `${relative}.html`);
 }
 
 const allFiles = await walk(dist);

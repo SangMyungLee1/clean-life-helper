@@ -130,7 +130,12 @@ function categoryHref(category, region = null) {
 }
 
 function hrefForRoute(route) {
-  return `/${route.split("/").map(encodeURIComponent).join("/")}`;
+  const publicRoute = route.endsWith("/index.html")
+    ? route.slice(0, -"index.html".length)
+    : route.endsWith(".html")
+      ? route.slice(0, -".html".length)
+      : route;
+  return `/${publicRoute.split("/").filter(Boolean).map(encodeURIComponent).join("/")}${publicRoute.endsWith("/") ? "/" : ""}`;
 }
 
 function canonicalForRoute(route) {
@@ -223,7 +228,7 @@ function footerMarkup() {
   return `<footer class="site-footer">
   <div class="shell footer-inner">
     <div><strong>${escapeHtml(config.siteName)}</strong><p>${escapeHtml(config.tagline)}</p></div>
-    <nav aria-label="사이트 안내"><a href="/affiliate-disclosure.html">제휴 안내</a><a href="/privacy.html">개인정보처리방침</a><a href="/rss.xml">RSS</a></nav>
+    <nav aria-label="사이트 안내"><a href="/affiliate-disclosure">제휴 안내</a><a href="/privacy">개인정보처리방침</a><a href="/rss.xml">RSS</a></nav>
   </div>
 </footer>`;
 }
@@ -654,7 +659,7 @@ async function main() {
   await writeRoute("privacy.html", infoPage("privacy"));
   await writeRoute("404.html", pageShell({ title: `페이지를 찾을 수 없습니다 | ${config.siteName}`, description: "요청한 페이지를 찾을 수 없습니다.", canonical: `${baseUrl}/404.html`, body: `<main class="not-found"><div class="shell"><p class="eyebrow">404</p><h1>페이지를 찾을 수 없습니다</h1><p>주소가 바뀌었거나 존재하지 않는 지역·서비스 페이지입니다.</p><a class="primary-link" href="/">홈에서 다시 찾기</a></div></main>` }));
 
-  const sitemapUrls = [`${baseUrl}/`, `${baseUrl}/affiliate-disclosure.html`, `${baseUrl}/privacy.html`];
+  const sitemapUrls = [`${baseUrl}/`, canonicalForRoute("affiliate-disclosure.html"), canonicalForRoute("privacy.html")];
   const serviceUrls = [];
   for (const category of catalog) {
     await writeRoute(categoryRoute(category), categoryPage(category));
