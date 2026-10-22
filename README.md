@@ -56,7 +56,7 @@ node scripts/serve.mjs
 2. 전체 빌드와 검증을 다시 실행합니다.
 3. GitHub 저장소에 올립니다.
 4. Cloudflare Pages에서 빌드 명령을 `npm run build`, 출력 디렉터리를 `dist`로 지정합니다.
-5. 배포 후 `sitemap-index.xml`, `rss.xml`, 대표 지역 페이지를 확인합니다.
+5. 배포 후 `sitemap.xml`, `rss.xml`, 대표 지역 페이지를 확인합니다.
 
 최신 결과물은 10,030개 파일이며 자동 검증을 통과했습니다. 견적 버튼은 내부 추적 주소를 거치지 않고 외부 제휴 링크로 직접 연결됩니다.
 

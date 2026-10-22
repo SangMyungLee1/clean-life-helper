@@ -605,15 +605,12 @@ function validateData() {
 }
 
 async function generateSitemaps(urls) {
-  const chunkSize = Number(config.sitemapChunkSize) || 1000;
-  const chunks = [];
-  for (let i = 0; i < urls.length; i += chunkSize) chunks.push(urls.slice(i, i + chunkSize));
-  await mkdir(path.join(dist, "sitemap"), { recursive: true });
-  await Promise.all(chunks.map((chunk, index) => writeRoute(`sitemap/sitemap-${index + 1}.xml`, `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${chunk.map((url) => `  <url><loc>${escapeXml(url)}</loc><lastmod>${escapeXml(config.publishedAt)}</lastmod></url>`).join("\n")}\n</urlset>\n`)));
-  const indexXml = `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${chunks.map((_, index) => `  <sitemap><loc>${escapeXml(`${baseUrl}/sitemap/sitemap-${index + 1}.xml`)}</loc><lastmod>${escapeXml(config.publishedAt)}</lastmod></sitemap>`).join("\n")}\n</sitemapindex>\n`;
-  await writeRoute("sitemap-index.xml", indexXml);
-  await writeRoute("sitemap.xml", indexXml);
-  return chunks.length;
+  if (urls.length >= 50000) throw new Error(`네이버 사이트맵 URL 제한 초과: ${urls.length}`);
+  const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((url) => `  <url><loc>${escapeXml(url)}</loc><lastmod>${escapeXml(config.publishedAt)}</lastmod></url>`).join("\n")}\n</urlset>\n`;
+  const sitemapSize = Buffer.byteLength(sitemapXml, "utf8");
+  if (sitemapSize >= 10 * 1024 * 1024) throw new Error(`네이버 사이트맵 10MB 제한 초과: ${sitemapSize} bytes`);
+  await writeRoute("sitemap.xml", sitemapXml);
+  return 1;
 }
 
 function rssBodyForService(category, region) {

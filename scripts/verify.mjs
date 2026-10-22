@@ -88,10 +88,19 @@ if (sponsoredLinks !== expectedPartnerPages * 4) failures.push(`전체 제휴 �
 if (htmlFiles.length !== expectedHtmlFiles) failures.push(`HTML 파일 수 불일치: ${htmlFiles.length} / ${expectedHtmlFiles}`);
 if (allFiles.length !== manifest.outputFileCount) failures.push(`전체 파일 수 불일치: ${allFiles.length} / ${manifest.outputFileCount}`);
 
-const requiredFiles = ["index.html", "404.html", "robots.txt", "rss.xml", "sitemap.xml", "sitemap-index.xml", "styles.css", "app.js", "_headers", "data/regions.json", "favicon.ico", "favicon-32x32.png", "favicon-192.png", "favicon-512.png", "apple-touch-icon.png"];
+const requiredFiles = ["index.html", "404.html", "robots.txt", "rss.xml", "sitemap.xml", "styles.css", "app.js", "_headers", "data/regions.json", "favicon.ico", "favicon-32x32.png", "favicon-192.png", "favicon-512.png", "apple-touch-icon.png"];
 for (const file of requiredFiles) {
   try { await access(path.join(dist, file)); } catch { failures.push(`필수 파일 누락: ${file}`); }
 }
+
+const sitemapXml = await readFile(path.join(dist, "sitemap.xml"), "utf8");
+const sitemapUrlCount = [...sitemapXml.matchAll(/<url>/g)].length;
+const sitemapSizeBytes = Buffer.byteLength(sitemapXml, "utf8");
+if (!sitemapXml.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')) failures.push("sitemap.xml이 단일 urlset 형식이 아닙니다.");
+if (sitemapXml.includes("<sitemapindex")) failures.push("sitemap.xml에 이전 사이트맵 인덱스가 남아 있습니다.");
+if (sitemapUrlCount !== manifest.sitemapUrlCount) failures.push(`사이트맵 URL 수 불일치: ${sitemapUrlCount} / ${manifest.sitemapUrlCount}`);
+if (sitemapUrlCount >= 50000) failures.push(`네이버 사이트맵 URL 제한 초과: ${sitemapUrlCount}`);
+if (sitemapSizeBytes >= 10 * 1024 * 1024) failures.push(`네이버 사이트맵 10MB 제한 초과: ${sitemapSizeBytes} bytes`);
 
 const partnerImageFiles = allFiles.filter((file) => file.includes(`${path.sep}images${path.sep}partners${path.sep}`) && file.endsWith(".webp"));
 if (partnerImageFiles.length !== 20) failures.push(`업체 전용 사진 수 불일치: ${partnerImageFiles.length} / 20`);
@@ -107,6 +116,8 @@ const report = {
   outputFileCount: allFiles.length,
   sponsoredLinkCount: sponsoredLinks,
   partnerImageCount: partnerImageFiles.length,
+  sitemapUrlCount,
+  sitemapSizeBytes,
   failures: failures.slice(0, 50)
 };
 
