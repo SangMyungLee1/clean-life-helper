@@ -1,0 +1,14 @@
+{
+  "name": "lifequote365",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sync:regions": "node scripts/sync-regions.mjs",
+    "build": "node scripts/build.mjs",
+    "tune:similarity": "node scripts/tune-content-variants.mjs",
+    "verify": "node scripts/verify.mjs",
+    "verify:similarity": "node scripts/verify-similarity.mjs",
+    "serve": "node scripts/serve.mjs"
+  }
+}

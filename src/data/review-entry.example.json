@@ -1,0 +1,11 @@
+{
+  "id": "실제-후기-고유번호",
+  "region": "서울 관악구 신림동",
+  "serviceId": "move-in-cleaning",
+  "displayName": "김**",
+  "text": "실제 이용자가 직접 작성하거나 내용을 확인한 후기 문구를 입력하세요.",
+  "usedAt": "2026-10-01",
+  "consentAt": "2026-10-22",
+  "sourceNote": "후기 원문과 게시 동의를 확인할 수 있는 내부 기록 위치",
+  "verified": false
+}
